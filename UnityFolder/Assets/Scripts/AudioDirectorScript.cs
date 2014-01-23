@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof (AudioSource))]
+
 public class AudioDirectorScript : MonoBehaviour 
 {
 	public bool requestPending;
 	public bool isAuthget = false;
 	public string[] devicesArray;
 	public int currentlySelectedDeviceIndex = 0;
+
+	public AudioSource currentAudioSource;
+	public AudioClip currentAudioClip;
+
+	public float[] spectrumDataArray;
 
 	// Use this for initialization
 	void Start () 
@@ -15,21 +22,27 @@ public class AudioDirectorScript : MonoBehaviour
 
 		StartCoroutine("RequestAuthorize");
 
-		
+		currentAudioSource = GetComponent<AudioSource>();
+		spectrumDataArray = new float[32];
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetKeyUp("e") || Input.GetKeyUp("e") )
-		{
-			if(isAuthget)
+		if(isAuthget)
+		{	
+			if(Input.GetKeyUp("e") || Input.GetKeyUp("e") )
 			{
+				
 				if(currentlySelectedDeviceIndex >= devicesArray.Length -1)
 					currentlySelectedDeviceIndex = 0;
 				else
 					currentlySelectedDeviceIndex += 1;
+		
 			}
+
+
+			HandleAudioData();
 		}
 	}
 
@@ -78,6 +91,17 @@ public class AudioDirectorScript : MonoBehaviour
 			GUI.Label(new Rect(0,0,1000,20),"FAILED TO GET AUTHENTIFICATION FOR MICROPHONE INPUT");			
 		}
 
+	}
+
+	void HandleAudioData()
+	{
+
+		currentAudioClip = Microphone.Start(devicesArray[currentlySelectedDeviceIndex], true, 1, 44100);
+		currentAudioSource.clip = currentAudioClip;
+
+		currentAudioSource.GetSpectrumData(spectrumDataArray, 0, FFTWindow.BlackmanHarris);
+
+		//		Debug.Log("GettinDatData");
 	}
 
 }
