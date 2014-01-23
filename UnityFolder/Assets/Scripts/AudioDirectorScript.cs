@@ -11,9 +11,10 @@ public class AudioDirectorScript : MonoBehaviour
 	public int currentlySelectedDeviceIndex = 0;
 
 	public AudioSource currentAudioSource;
-	public AudioClip currentAudioClip;
 
 	public float[] spectrumDataArray;
+
+	public float fftSum = 0;
 
 	// Use this for initialization
 	void Start () 
@@ -38,12 +39,25 @@ public class AudioDirectorScript : MonoBehaviour
 					currentlySelectedDeviceIndex = 0;
 				else
 					currentlySelectedDeviceIndex += 1;
-		
+
+				SetupAudioSourceWithMicrophone(currentlySelectedDeviceIndex);
+			
 			}
 
 
 			HandleAudioData();
 		}
+	}
+
+	void SetupAudioSourceWithMicrophone(int deviceIndex)
+	{
+		currentAudioSource.loop = true;
+		currentAudioSource.volume = 1.0f;
+		currentAudioSource.mute = false;
+		currentAudioSource.playOnAwake = true;
+
+		currentAudioSource.clip = Microphone.Start(devicesArray[deviceIndex], true, 1, 44100);
+		currentAudioSource.Play();
 	}
 
 	public IEnumerator RequestAuthorize()
@@ -55,7 +69,8 @@ public class AudioDirectorScript : MonoBehaviour
 			Debug.Log("MICROPHONE AUTH GET!");
 			devicesArray = Microphone.devices;	
 			isAuthget = true;
-			//InitMicrophone();
+			requestPending = false;
+			SetupAudioSourceWithMicrophone(currentlySelectedDeviceIndex);
 		}
 
 		Debug.Log(Microphone.devices.Length);
@@ -71,7 +86,10 @@ public class AudioDirectorScript : MonoBehaviour
 	void OnGUI()
 	{
 		if(isAuthget)
-		{
+		{	
+			string fftSumString = "fftSum: " + fftSum.ToString();
+			GUI.Label(new Rect(500,0,600,20), fftSumString);
+
 	    	GUI.Label(new Rect(0,0,200,20),"List of available devices:");
 	    	GUI.Label(new Rect(200,0,200,20),"Press e to switch devices");
 
@@ -96,10 +114,13 @@ public class AudioDirectorScript : MonoBehaviour
 	void HandleAudioData()
 	{
 
-		currentAudioClip = Microphone.Start(devicesArray[currentlySelectedDeviceIndex], true, 1, 44100);
-		currentAudioSource.clip = currentAudioClip;
-
 		currentAudioSource.GetSpectrumData(spectrumDataArray, 0, FFTWindow.BlackmanHarris);
+
+		//fftSum = 0;
+		foreach(float fftValue in spectrumDataArray)
+		{
+			fftSum += fftValue;
+		}
 
 		//		Debug.Log("GettinDatData");
 	}
