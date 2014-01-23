@@ -4,6 +4,8 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour 
 {
 
+	public GameObject bulletPrefab;
+
 	public float hSpeedScale = 1.0f;
 	public float vSpeedScale = 1.0f;
 
@@ -18,6 +20,7 @@ public class PlayerScript : MonoBehaviour
 	{
 
 		HandleMovement();
+		HandleFiring();
 	
 	}
 
@@ -27,6 +30,15 @@ public class PlayerScript : MonoBehaviour
 		tempPosition.x +=  Input.GetAxis("Horizontal") * hSpeedScale * Time.deltaTime;
 		tempPosition.y +=  Input.GetAxis("Vertical") * vSpeedScale * Time.deltaTime;
 		transform.position = tempPosition;
+	}
+
+	void HandleFiring()
+	{
+		if(Input.GetButtonUp("Fire1"))
+		{
+			Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+		}
+
 	}
 
 }
