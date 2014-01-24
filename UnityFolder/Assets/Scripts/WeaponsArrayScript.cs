@@ -50,6 +50,7 @@ public class WeaponsArrayScript : MonoBehaviour
 	{
 		calculatedRGB = audioDirector.GetComponent<AudioDirectorScript>().calculatedRGB;
 		HandleWeaponScales();
+		HandleWeaponsColors();
 	
 	}
 
@@ -60,6 +61,13 @@ public class WeaponsArrayScript : MonoBehaviour
 		midWeapon.transform.localScale = calculatedRGB.g * weaponsScale * midBulletPrefab.transform.localScale;
 		highWeapon.transform.localScale = calculatedRGB.b * weaponsScale *  highBulletPrefab.transform.localScale;
 
+	}
+
+	void HandleWeaponsColors()
+	{
+		lowWeapon.renderer.material.color = new Color(calculatedRGB.r, 0, 0, calculatedRGB.r);
+		midWeapon.renderer.material.color = new Color(0, calculatedRGB.g, 0, calculatedRGB.g);
+		highWeapon.renderer.material.color = new Color(0, 0, calculatedRGB.b, calculatedRGB.b);
 	}
 
 }
