@@ -12,7 +12,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 	public AudioSource currentAudioSource;
 
-	public float[] spectrumDataArray;
+	public float[] spectrumDataArray = new float[32];
 
 	public float fftSum = 0;
 
@@ -24,7 +24,8 @@ public class AudioDirectorScript : MonoBehaviour
 		StartCoroutine("RequestAuthorize");
 
 		currentAudioSource = GetComponent<AudioSource>();
-		spectrumDataArray = new float[32];
+		//spectrumDataArray = new float[32];
+		spectrumDataArray[1] = 17; // such debuging
 	}
 	
 	// Update is called once per frame
@@ -113,7 +114,6 @@ public class AudioDirectorScript : MonoBehaviour
 
 	void HandleAudioData()
 	{
-
 		currentAudioSource.GetSpectrumData(spectrumDataArray, 0, FFTWindow.BlackmanHarris);
 
 		//fftSum = 0;
