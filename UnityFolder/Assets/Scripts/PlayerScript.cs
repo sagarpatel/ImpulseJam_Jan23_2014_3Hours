@@ -9,10 +9,13 @@ public class PlayerScript : MonoBehaviour
 	public float hSpeedScale = 1.0f;
 	public float vSpeedScale = 1.0f;
 
+	public Color playerColor = new Color();
+	public GameObject audioDirector;
+
 	// Use this for initialization
 	void Start () 
 	{
-	
+		audioDirector = GameObject.FindWithTag("AudioDirector");
 	}
 	
 	// Update is called once per frame
@@ -21,6 +24,7 @@ public class PlayerScript : MonoBehaviour
 
 		HandleMovement();
 		HandleFiring();
+		HandlePlayerColor();
 	
 	}
 
@@ -38,7 +42,12 @@ public class PlayerScript : MonoBehaviour
 		{
 			Instantiate(bulletPrefab, transform.position, Quaternion.identity);
 		}
+	}
 
+	void HandlePlayerColor()
+	{
+		playerColor = audioDirector.GetComponent<AudioDirectorScript>().calculatedRGB;
+		gameObject.renderer.material.color = playerColor;
 	}
 
 }
